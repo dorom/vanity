@@ -5,3 +5,5 @@ html
 test/myapp/log/
 vendor
 Gemfile.lock
+/nbproject/private/
+/nbproject/
