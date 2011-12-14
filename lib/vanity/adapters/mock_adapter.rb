@@ -49,7 +49,8 @@ module Vanity
         @metrics[metric] && @metrics[metric][:last_update_at]
       end
 
-      def metric_track(metric, timestamp, identity, values)
+      def metric_track(metric, timestamp, identity, values, object_id = nil, params = nil)
+        #TODO: implement saves for object_id AND paramas
         @metrics[metric] ||= {}
         current = @metrics[metric][timestamp.to_date] ||= []
         values.each_with_index do |v,i|

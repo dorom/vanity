@@ -136,17 +136,25 @@ module Vanity
     #   foo_and_bar.track! [5,11]
     def track!(args = nil)
       return unless @playground.collecting?
-      timestamp, identity, values = track_args(args)
-      connection.metric_track @id, timestamp, identity, values
+      timestamp, identity, values, object_id, params = track_args(args)
+      connection.metric_track @id, timestamp, identity, values, object_id, params
       @playground.logger.info "vanity: #{@id} with value #{values.join(", ")}"
       call_hooks timestamp, identity, values
     end
 
     # Parses arguments to track! method and return array with timestamp,
     # identity and array of values.
+    # :object_id - an object that the metric was tracked for, default nil
+    # :params - parameters that the trackable function had, default nil
+    # :timestamp - occurrence of event, default now
+    # :values - the amount of metric e.g. :bought_carrots, {:values => 12} ; :bought_items, [12,123,1]
+    # :identity - the user VanityParticipant
     def track_args(args)
+      object_id, parameters = nil, []
       case args
       when Hash
+        object_id = args[:object_id] if args.keys.include?(:object_id)        
+        parameters = args[:params] if args.keys.include?(:params) && parameters.is_a?(Array)        
         timestamp, identity, values = args.values_at(:timestamp, :identity, :values)
       when Array
         values = args
@@ -154,7 +162,7 @@ module Vanity
         values = [args]
       end
         identity = Vanity.context.vanity_identity rescue nil
-      [timestamp || Time.now, identity, values || [1]]
+      [timestamp || Time.now, identity, values || [1], object_id, parameters]
     end
     protected :track_args
 

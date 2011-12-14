@@ -82,11 +82,12 @@ module Vanity
         record && record["last_update_at"]
       end
 
-      def metric_track(metric, timestamp, identity, values)
+      def metric_track(metric, timestamp, identity, values, object_id = nil, params = nil)
         inc = {}
         values.each_with_index do |v,i|
           inc["data.#{timestamp.to_date}.#{i}"] = v
         end
+        #TODO: implement object_id, params into Mongo save
         @metrics.update({ :_id=>metric }, { "$inc"=>inc, "$set"=>{ :last_update_at=>Time.now } }, :upsert=>true)
       end
 
@@ -94,6 +95,10 @@ module Vanity
         record = @metrics.find_one(:_id=>metric)
         data = record && record["data"] || {}
         (from.to_date..to.to_date).map { |date| (data[date.to_s] || {}).values }
+      end
+      
+      def metrics(metric, from = 1.day.ago, to = Time.now)
+        @metrics.all(:_id=>metric)
       end
 
       def destroy_metric(metric)

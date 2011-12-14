@@ -66,7 +66,8 @@ module Vanity
         last_update_at && Time.at(last_update_at.to_i)
       end
 
-      def metric_track(metric, timestamp, identity, values)
+      def metric_track(metric, timestamp, identity, values, object_id = nil, params = nil)
+        #TODO: implement saves for object_id and params
         values.each_with_index do |v,i|
           @metrics.incrby "#{metric}:#{timestamp.to_date}:value:#{i}", v
         end

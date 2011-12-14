@@ -11,6 +11,8 @@ class VanityMigration < ActiveRecord::Migration
       t.integer :index
       t.integer :value
       t.string :date
+      t.text :params
+      t.string :date
     end
     add_index :vanity_metric_values, [:vanity_metric_id]
 

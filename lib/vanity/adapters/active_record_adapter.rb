@@ -107,13 +107,31 @@ module Vanity
         record && record.updated_at
       end
 
-      def metric_track(metric, timestamp, identity, values)
-        record = VanityMetric.retrieve(metric)
-
+      def metric_track(metric, timestamp, identity, values, object_id = nil, params = nil)
+        record = VanityMetric.retrieve(metric)        
+        p = begin
+          case params
+            when Hash
+              params.collect{|k,v| k.to_s << '=' << v.to_s}.join(';')
+            when Array
+              params.join(';')
+            else
+              begin
+                params.to_s
+              rescue
+                nil
+              end
+          end
+        end        
         values.each_with_index do |value, index|
-          record.vanity_metric_values.create(:date => timestamp.to_date.to_s, :index => index, :value => value)
+          record.vanity_metric_values.create(
+            :date => timestamp.to_date.to_s, 
+            :index => index, 
+            :value => value,
+            :object_id => object_id,
+            :params => p
+          )
         end
-
         record.updated_at = Time.now
         record.save
       end

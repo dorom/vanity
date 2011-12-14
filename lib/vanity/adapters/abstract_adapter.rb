@@ -48,7 +48,7 @@ module Vanity
       end
   
       # Track metric data.
-      def metric_track(metric, timestamp, identity, values)
+      def metric_track(metric, timestamp, identity, values, object_id = nil, params = nil)
         fail "Not implemented"
       end
 
