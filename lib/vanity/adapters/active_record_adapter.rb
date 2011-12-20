@@ -132,7 +132,7 @@ module Vanity
             :params => p
           )
         end
-        record.updated_at = Time.now
+        record.updated_at = Time.now unless record.updated_at.to_i == Time.now.to_i
         record.save
       end
 
